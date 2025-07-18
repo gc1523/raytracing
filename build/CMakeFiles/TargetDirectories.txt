@@ -1,0 +1,3 @@
+/home/guy/CPPProgramming/raytracing/build/CMakeFiles/raytracing.dir
+/home/guy/CPPProgramming/raytracing/build/CMakeFiles/edit_cache.dir
+/home/guy/CPPProgramming/raytracing/build/CMakeFiles/rebuild_cache.dir
