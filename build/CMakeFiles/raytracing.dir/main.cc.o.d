@@ -193,6 +193,7 @@ CMakeFiles/raytracing.dir/main.cc.o: \
  /home/guy/CPPProgramming/raytracing/colour.h \
  /home/guy/CPPProgramming/raytracing/vec3.h \
  /home/guy/CPPProgramming/raytracing/ray.h \
+ /home/guy/CPPProgramming/raytracing/interval.h \
  /home/guy/CPPProgramming/raytracing/hittable.h \
  /home/guy/CPPProgramming/raytracing/hittable_list.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_vector.h \
