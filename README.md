@@ -9,8 +9,15 @@ This project implements a simple raytracer in C++. Credit to [Ray Tracing in One
 
 # Some example images
 
-![Simple World](https://raw.githubusercontent.com/guyco/raytracing/master/images/simple_world.png)
-![Gamma Correction](https://raw.githubusercontent.com/guyco/raytracing/master/images/gamma_corrected_gamut.png)
-![Reflections](https://raw.githubusercontent.com/guyco/raytracing/master/images/reflections.png)
-![Masterpiece](https://raw.githubusercontent.com/guyco/raytracing/master/images/masterpiece.png)
+![Simple World](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/simple_world.png)
+*Simple World*
+
+![Gamma Correction](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/gamma_corrected_gamut.png)
+*Gamma Correction*
+
+![Reflections](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/reflections.png)
+*Reflections*
+
+![Masterpiece](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/masterpiece.png)
+*Masterpiece*
 
