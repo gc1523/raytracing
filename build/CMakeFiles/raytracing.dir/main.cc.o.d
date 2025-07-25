@@ -84,9 +84,10 @@ CMakeFiles/raytracing.dir/main.cc.o: \
  /usr/include/c++/11/tr1/modified_bessel_func.tcc \
  /usr/include/c++/11/tr1/poly_hermite.tcc \
  /usr/include/c++/11/tr1/poly_laguerre.tcc \
- /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/iostream \
- /usr/include/c++/11/ostream /usr/include/c++/11/ios \
- /usr/include/c++/11/iosfwd /usr/include/c++/11/bits/stringfwd.h \
+ /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/cstdlib \
+ /usr/include/c++/11/iostream /usr/include/c++/11/ostream \
+ /usr/include/c++/11/ios /usr/include/c++/11/iosfwd \
+ /usr/include/c++/11/bits/stringfwd.h \
  /usr/include/c++/11/bits/memoryfwd.h /usr/include/c++/11/bits/postypes.h \
  /usr/include/c++/11/cwchar /usr/include/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
@@ -141,9 +142,8 @@ CMakeFiles/raytracing.dir/main.cc.o: \
  /usr/include/c++/11/bits/stl_construct.h /usr/include/c++/11/string_view \
  /usr/include/c++/11/bits/functional_hash.h \
  /usr/include/c++/11/bits/string_view.tcc \
- /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdlib \
- /usr/include/c++/11/cstdio /usr/include/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdio \
+ /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
@@ -189,14 +189,21 @@ CMakeFiles/raytracing.dir/main.cc.o: \
  /usr/include/c++/11/bits/atomic_lockfree_defines.h \
  /usr/include/c++/11/backward/auto_ptr.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
- /usr/include/c++/11/pstl/execution_defs.h \
- /home/guy/CPPProgramming/raytracing/colour.h \
- /home/guy/CPPProgramming/raytracing/vec3.h \
- /home/guy/CPPProgramming/raytracing/ray.h \
- /home/guy/CPPProgramming/raytracing/interval.h \
- /home/guy/CPPProgramming/raytracing/hittable.h \
- /home/guy/CPPProgramming/raytracing/hittable_list.h \
- /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_vector.h \
+ /usr/include/c++/11/pstl/execution_defs.h /usr/include/c++/11/random \
+ /usr/include/c++/11/bits/random.h /usr/include/c++/11/vector \
+ /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
+ /usr/include/c++/11/bits/uniform_int_dist.h \
+ /usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h \
+ /usr/include/c++/11/bits/random.tcc /usr/include/c++/11/numeric \
+ /usr/include/c++/11/bits/stl_numeric.h \
+ /usr/include/c++/11/pstl/glue_numeric_defs.h \
+ /home/guy/CPPProgramming/raytracing/colour.h \
+ /home/guy/CPPProgramming/raytracing/vec3.h \
+ /home/guy/CPPProgramming/raytracing/interval.h \
+ /home/guy/CPPProgramming/raytracing/ray.h \
+ /home/guy/CPPProgramming/raytracing/camera.h \
+ /home/guy/CPPProgramming/raytracing/hittable.h \
+ /home/guy/CPPProgramming/raytracing/hittable_list.h \
  /home/guy/CPPProgramming/raytracing/sphere.h

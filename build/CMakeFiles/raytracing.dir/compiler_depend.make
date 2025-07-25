@@ -96,6 +96,7 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
   /usr/include/c++/11/tr1/poly_hermite.tcc \
   /usr/include/c++/11/tr1/poly_laguerre.tcc \
   /usr/include/c++/11/tr1/riemann_zeta.tcc \
+  /usr/include/c++/11/cstdlib \
   /usr/include/c++/11/iostream \
   /usr/include/c++/11/ostream \
   /usr/include/c++/11/ios \
@@ -170,7 +171,6 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
   /usr/include/c++/11/bits/functional_hash.h \
   /usr/include/c++/11/bits/string_view.tcc \
   /usr/include/c++/11/ext/string_conversions.h \
-  /usr/include/c++/11/cstdlib \
   /usr/include/c++/11/cstdio \
   /usr/include/stdio.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -232,23 +232,29 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
   /usr/include/c++/11/backward/auto_ptr.h \
   /usr/include/c++/11/pstl/glue_memory_defs.h \
   /usr/include/c++/11/pstl/execution_defs.h \
-  ../colour.h \
-  ../vec3.h \
-  ../ray.h \
-  ../hittable.h \
-  ../hittable_list.h \
+  /usr/include/c++/11/random \
+  /usr/include/c++/11/bits/random.h \
   /usr/include/c++/11/vector \
   /usr/include/c++/11/bits/stl_vector.h \
   /usr/include/c++/11/bits/stl_bvector.h \
   /usr/include/c++/11/bits/vector.tcc \
+  /usr/include/c++/11/bits/uniform_int_dist.h \
+  /usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h \
+  /usr/include/c++/11/bits/random.tcc \
+  /usr/include/c++/11/numeric \
+  /usr/include/c++/11/bits/stl_numeric.h \
+  /usr/include/c++/11/pstl/glue_numeric_defs.h \
+  ../colour.h \
+  ../vec3.h \
+  ../interval.h \
+  ../ray.h \
+  ../camera.h \
+  ../hittable.h \
+  ../hittable_list.h \
   ../sphere.h
 
 
 ../sphere.h:
-
-/usr/include/c++/11/bits/vector.tcc:
-
-/usr/include/c++/11/bits/stl_bvector.h:
 
 ../hittable_list.h:
 
@@ -256,7 +262,13 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 ../ray.h:
 
+../interval.h:
+
 ../vec3.h:
+
+/usr/include/c++/11/bits/vector.tcc:
+
+/usr/include/c++/11/bits/stl_bvector.h:
 
 /usr/include/c++/11/bits/shared_ptr_atomic.h:
 
@@ -274,6 +286,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/c++/11/bits/stl_raw_storage_iter.h:
 
+/usr/include/c++/11/bits/stl_numeric.h:
+
 /usr/include/c++/11/backward/auto_ptr.h:
 
 /usr/include/c++/11/bits/stl_uninitialized.h:
@@ -287,6 +301,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 /usr/include/c++/11/bits/basic_ios.tcc:
 
 /usr/include/c++/11/bits/locale_facets.tcc:
+
+/usr/include/c++/11/random:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h:
 
@@ -332,6 +348,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/c++/11/initializer_list:
 
+../camera.h:
+
 /usr/include/c++/11/bits/range_access.h:
 
 /usr/include/c++/11/bits/stl_function.h:
@@ -370,6 +388,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
+/usr/include/c++/11/bits/random.tcc:
+
 /usr/include/sched.h:
 
 /usr/include/c++/11/ext/concurrence.h:
@@ -383,6 +403,10 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 /usr/include/c++/11/cctype:
 
 /usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/c++/11/bits/ostream.tcc:
+
+/usr/include/c++/11/clocale:
 
 /usr/include/c++/11/bits/allocated_ptr.h:
 
@@ -457,6 +481,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 /usr/include/c++/11/pstl/execution_defs.h:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h:
 
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
 
@@ -570,6 +596,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
 
+/usr/include/c++/11/bits/random.h:
+
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/c++/11/bits/shared_ptr_base.h:
@@ -585,6 +613,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 /usr/include/c++/11/ext/new_allocator.h:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
+
+/usr/include/c++/11/numeric:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
 
@@ -622,10 +652,6 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/c++/11/bits/ptr_traits.h:
 
-/usr/include/c++/11/bits/ostream.tcc:
-
-/usr/include/c++/11/clocale:
-
 /usr/include/c++/11/debug/debug.h:
 
 /usr/include/c++/11/bits/predefined_ops.h:
@@ -634,9 +660,9 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/c++/11/bit:
 
-/usr/include/c++/11/cstdlib:
-
 /usr/include/c++/11/bits/stl_iterator_base_types.h:
+
+/usr/include/c++/11/cstdlib:
 
 /usr/include/c++/11/tr1/poly_laguerre.tcc:
 
@@ -694,6 +720,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
+/usr/include/c++/11/pstl/glue_numeric_defs.h:
+
 /usr/include/c++/11/bits/exception.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
@@ -705,6 +733,8 @@ CMakeFiles/raytracing.dir/main.cc.o: ../main.cc \
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
 /usr/include/c++/11/exception:
+
+/usr/include/c++/11/bits/uniform_int_dist.h:
 
 /usr/include/wchar.h:
 
