@@ -31,4 +31,11 @@ void write_colour(std::ostream& out, const colour& pixel_colour) {
     out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }
 
+static colour random(std::mt19937& rng) {
+    return colour(random_double(rng), random_double(rng), random_double(rng));
+}
+static colour random(double min, double max, std::mt19937& rng) {
+    return colour(random_double(min, max, rng), random_double(min, max, rng), random_double(min, max, rng));
+}
+
 #endif

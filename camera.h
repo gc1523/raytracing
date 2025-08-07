@@ -3,6 +3,11 @@
 
 #include "hittable.h"
 #include "material.h"
+#include <thread>
+#include <vector>
+#include <mutex>
+#include <atomic>
+#include <random>
 
 class camera {
   public:
@@ -20,23 +25,50 @@ class camera {
     double focus_dist = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
 
-    void render(const hittable& world) {
+    void render(const hittable& world, unsigned int seed = 42) {
         initialize();
 
-        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        std::vector<std::vector<colour>> framebuffer(image_height, std::vector<colour>(image_width));
+        int thread_count = std::thread::hardware_concurrency();
+        if (thread_count == 0) thread_count = 4; 
 
-        for (int j = 0; j < image_height; j++) {
-            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
-            for (int i = 0; i < image_width; i++) {
-                colour pixel_color(0,0,0);
-                for (int sample = 0; sample < samples_per_pixel; sample++) {
-                    ray r = get_ray(i, j);
-                    pixel_color += ray_colour(r, max_depth, world);
+        std::atomic<int> lines_done{0};
+
+        auto render_scanlines = [&](int start, int end, int thread_id) {
+            std::mt19937 rng(seed + thread_id); // Unique generator per thread
+            for (int j = start; j < end; ++j) {
+                for (int i = 0; i < image_width; ++i) {
+                    colour pixel_color(0,0,0);
+                    for (int sample = 0; sample < samples_per_pixel; ++sample) {
+                        ray r = get_ray(i, j, rng);
+                        pixel_color += ray_colour(r, max_depth, world, rng);
+                    }
+                    framebuffer[j][i] = pixel_samples_scale * pixel_color;
                 }
-                write_colour(std::cout, pixel_samples_scale * pixel_color);
+                int done = ++lines_done;
+                if (done % 10 == 0 || done == image_height) {
+                    std::clog << "\rScanlines remaining: " << (image_height - done) << "   " << std::flush;
+                }
+            }
+        };
+
+        std::vector<std::thread> threads;
+        int lines_per_thread = image_height / thread_count;
+        int extra = image_height % thread_count;
+        int start = 0;
+        for (int t = 0; t < thread_count; ++t) {
+            int end = start + lines_per_thread + (t < extra ? 1 : 0);
+            threads.emplace_back(render_scanlines, start, end, t);
+            start = end;
+        }
+        for (auto& th : threads) th.join();
+
+        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        for (int j = 0; j < image_height; ++j) {
+            for (int i = 0; i < image_width; ++i) {
+                write_colour(std::cout, framebuffer[j][i]);
             }
         }
-
         std::clog << "\rDone.                 \n";
     }
 
@@ -88,33 +120,28 @@ class camera {
         defocus_disk_v = v * defocus_radius;
     }
 
-    ray get_ray(int i, int j) const {
-        // Construct a camera ray originating from the defocus disk and directed at a randomly
-        // sampled point around the pixel location i, j.
-
-        auto offset = sample_square();
+    ray get_ray(int i, int j, std::mt19937& rng) const {
+        auto offset = sample_square(rng);
         auto pixel_sample = pixel00_loc
                           + ((i + offset.x()) * pixel_delta_u)
                           + ((j + offset.y()) * pixel_delta_v);
 
-        auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample();
+        auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample(rng);
         auto ray_direction = pixel_sample - ray_origin;
 
         return ray(ray_origin, ray_direction);
     }
 
-    vec3 sample_square() const {
-        // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
-        return vec3(random_double() - 0.5, random_double() - 0.5, 0);
+    vec3 sample_square(std::mt19937& rng) const {
+        return vec3(random_double(rng) - 0.5, random_double(rng) - 0.5, 0);
     }
 
-    point3 defocus_disk_sample() const {
-        // Returns a random point in the camera defocus disk.
-        auto p = random_in_unit_disk();
+    point3 defocus_disk_sample(std::mt19937& rng) const {
+        auto p = random_in_unit_disk(rng);
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    colour ray_colour(const ray& r, int depth, const hittable& world) const {
+    colour ray_colour(const ray& r, int depth, const hittable& world, std::mt19937& rng) const {
         // If we've exceeded the ray bounce limit, no more light is gathered.
         if (depth <= 0)
             return colour(0,0,0);
@@ -123,8 +150,8 @@ class camera {
         if (world.hit(r, interval(0.001, infinity), rec)) {
             ray scattered;
             colour attenuation;
-            if (rec.mat->scatter(r, rec, attenuation, scattered))
-                return attenuation * ray_colour(scattered, depth-1, world);
+            if (rec.mat->scatter(r, rec, attenuation, scattered, rng))
+                return attenuation * ray_colour(scattered, depth-1, world, rng);
             return colour(0,0,0);
         }
 
