@@ -6,9 +6,15 @@
 #include "sphere.h"
 #include "material.h"
 #include <random>
+#include <fstream>
 
-int image_generation() {
-    unsigned int seed = 69;
+int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,2,3), point3 lookat = point3(0,0,0), const std::string& filename = "output.ppm") {
+    std::ofstream out(filename);
+    if (!out) {
+        std::cerr << "Failed to open " << filename << " for writing.\n";
+        return 1;
+    }
+
     std::mt19937 rng(seed);
 
     hittable_list world;
@@ -55,27 +61,48 @@ int image_generation() {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1200;
-    cam.samples_per_pixel = 50;
-    cam.max_depth         = 50;
+    cam.image_width       = 384;
+    cam.samples_per_pixel = 5;
+    cam.max_depth         = 5;
 
     cam.vfov     = 20;
-    cam.lookfrom = point3(13,2,3);
-    cam.lookat   = point3(0,0,0);
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0.6;
     cam.focus_dist    = 10.0;
 
-    cam.render(world, seed);
+    cam.render(world, seed, out); // Pass the stream
+    return 0;
 }
 
 void video_generation() {
-    // Soon
+    std::vector<std::string> png_frames;
+
+    int frame_idx = 0;
+
+    for (int i = 0; i < 360; i += 3) {
+        double angle = i * M_PI / 180.0;
+        point3 lookfrom(13 * std::cos(angle), 2, 13 * std::sin(angle));
+        point3 lookat(0, 0, 0);
+        char ppm_name[64]; char png_name[64];
+        std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
+        std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
+        image_generation(42, lookfrom, lookat, ppm_name);
+
+        std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
+        std::system(cmd.c_str());
+        png_frames.push_back(png_name);
+
+        frame_idx++;
+    }
+    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/output.mp4");
 }
 
-void main() {
-    image_generation();
-    // video_generation();
+int main() {
+    // image_generation();
+    video_generation();
+    return 0;
 }
 

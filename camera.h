@@ -25,7 +25,7 @@ class camera {
     double focus_dist = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
 
-    void render(const hittable& world, unsigned int seed = 42) {
+    void render(const hittable& world, unsigned int seed, std::ostream& out) {
         initialize();
 
         std::vector<std::vector<colour>> framebuffer(image_height, std::vector<colour>(image_width));
@@ -63,10 +63,10 @@ class camera {
         }
         for (auto& th : threads) th.join();
 
-        std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+        out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
         for (int j = 0; j < image_height; ++j) {
             for (int i = 0; i < image_width; ++i) {
-                write_colour(std::cout, framebuffer[j][i]);
+                write_colour(out, framebuffer[j][i]);
             }
         }
         std::clog << "\rDone.                 \n";
