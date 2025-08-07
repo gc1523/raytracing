@@ -21,3 +21,6 @@ This project implements a simple raytracer in C++. Credit to [this ray tracing c
 ![Masterpiece](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/masterpiece.png)
 *Masterpiece*
 
+![216p_gif](https://raw.githubusercontent.com/gc1523/raytracing/master/gifs/216p.gif)
+*Quick and dirty*
+
