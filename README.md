@@ -6,6 +6,8 @@ This project implements a simple raytracer in C++. Credit to [this ray tracing c
 - Basic ray tracing functionality
 - Support for different materials (lambertian, metal, dielectric)
 - Camera with defocus blur and depth of field
+- Multi-threaded image generation
+- Video generation based off of the idea of moving the camera around and stitching stills together
 
 # Some example images
 
