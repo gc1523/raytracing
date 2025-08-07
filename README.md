@@ -1,6 +1,6 @@
 ### Raytracing
 
-This project implements a simple raytracer in C++. Credit to [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) for the foundational concepts and code structure.
+This project implements a simple raytracer in C++. Credit to [this ray tracing course](https://raytracing.github.io/books/RayTracingInOneWeekend.html) for the foundational concepts and code structure.
 
 # Features
 - Basic ray tracing functionality
