@@ -8,7 +8,7 @@
 #include <random>
 #include <fstream>
 
-int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,2,3), point3 lookat = point3(0,0,0), const std::string& filename = "output.ppm") {
+int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
     std::ofstream out(filename);
     if (!out) {
         std::cerr << "Failed to open " << filename << " for writing.\n";
@@ -51,19 +51,30 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,2,3), p
     }
 
     auto material1 = make_shared<dielectric>(1.5);
-    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material1));
 
     auto material2 = make_shared<lambertian>(colour(0.4, 0.2, 0.1));
     world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
 
     auto material3 = make_shared<metal>(colour(0.7, 0.6, 0.5), 0.0);
-    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material3));
+
+    // Add a green metal sphere just behind the camera, this makes the "camera"
+    // appear in reflections.
+
+    point3 green_sphere_center(lookfrom.x() + (lookfrom.x() - lookat.x()) * 0.5,
+                               lookfrom.y() + (lookfrom.y() - lookat.y()) * 0.5,
+                               lookfrom.z() + (lookfrom.z() - lookat.z()) * 0.5);
+
+    auto material4 = make_shared<metal>(colour(0, 1, 0), 0);
+    world.add(make_shared<sphere>(green_sphere_center, 0.25, material4));
+
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 384;
-    cam.samples_per_pixel = 5;
-    cam.max_depth         = 5;
+    cam.image_width       = 512;
+    cam.samples_per_pixel = 10;
+    cam.max_depth         = 10;
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -73,7 +84,7 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,2,3), p
     cam.defocus_angle = 0.6;
     cam.focus_dist    = 10.0;
 
-    cam.render(world, seed, out); // Pass the stream
+    cam.render(world, seed, out);
     return 0;
 }
 
@@ -81,11 +92,11 @@ void video_generation() {
     std::vector<std::string> png_frames;
 
     int frame_idx = 0;
-
+    // Rotate around the scene
     for (int i = 0; i < 360; i += 3) {
         double angle = i * M_PI / 180.0;
-        point3 lookfrom(13 * std::cos(angle), 2, 13 * std::sin(angle));
-        point3 lookat(0, 0, 0);
+        point3 lookfrom(13 * std::sin(angle), 3, 13 * std::cos(angle));
+        point3 lookat(0, 1, 0);
         char ppm_name[64]; char png_name[64];
         std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
         std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
@@ -97,11 +108,58 @@ void video_generation() {
 
         frame_idx++;
     }
-    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/output.mp4");
+
+    // Generate frames moving near the metal sphere
+    // This basically moves the camera along the line joining the centre of the 
+    // metal sphere and the initial camera lookat point.
+    // But we dont want to collide with the sphere, so we only move 80% of the 
+    // distance between the two points.
+    for (int i = 0; i < 40; i++) {
+        double x = 0;
+        double y = 3 - i / 50.0 * (3 - 1); 
+        double z = 13 - i / 50.0 * (13 - 0);
+
+        point3 lookfrom(x, y, z);
+        point3 lookat(0, 1, 0);
+        
+        char ppm_name[64]; char png_name[64];
+        std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
+        std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
+        image_generation(42, lookfrom, lookat, ppm_name);
+
+        std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
+        std::system(cmd.c_str());
+        png_frames.push_back(png_name);
+
+        frame_idx++;
+    }
+
+    // Make our way back to the initial position for a smooth loop
+    for (int i = 39; i >= 0; i--) {
+        double x = 0;
+        double y = 3 - i / 50.0 * (3 - 1); 
+        double z = 13 - i / 50.0 * (13 - 0);
+
+        point3 lookfrom(x, y, z);
+        point3 lookat(0, 1, 0);
+        
+        char ppm_name[64]; char png_name[64];
+        std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
+        std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
+        image_generation(42, lookfrom, lookat, ppm_name);
+
+        std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
+        std::system(cmd.c_str());
+        png_frames.push_back(png_name);
+
+        frame_idx++;
+    }
+
+    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/4k.mp4");
 }
 
 int main() {
-    // image_generation();
+    // image_generation(0, point3(0,3,13), point3(0,1,0), "output.ppm");
     video_generation();
     return 0;
 }
