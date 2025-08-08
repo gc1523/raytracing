@@ -1,0 +1,31 @@
+name: Free Compute # Thank you daddy github
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-raytracer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build project
+        run: cmake --build build --config Release
+
+      - name: Run raytracer
+        run: build/raytracing
+
+      - name: Upload output image
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-image
+          path: output.ppm
