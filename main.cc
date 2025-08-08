@@ -3,7 +3,7 @@
 #include "camera.h"
 #include "hittable.h"
 #include "hittable_list.h"
-#include "sphere.h"
+#include "shapes.h"
 #include "material.h"
 #include <random>
 #include <fstream>
@@ -28,23 +28,26 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
             point3 center(a + 0.9*random_double(rng), 0.2, b + 0.9*random_double(rng));
 
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
-                shared_ptr<material> sphere_material;
+                shared_ptr<material> material;
 
                 if (choose_mat < 0.8) {
                     // diffuse
                     auto albedo = colour::random(rng) * colour::random(rng);
-                    sphere_material = make_shared<lambertian>(albedo);
-                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                    material = make_shared<lambertian>(albedo);
                 } else if (choose_mat < 0.95) {
                     // metal
                     auto albedo = colour::random(0.5, 1, rng);
                     auto fuzz = random_double(0, 0.5, rng);
-                    sphere_material = make_shared<metal>(albedo, fuzz);
-                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                    material = make_shared<metal>(albedo, fuzz);
                 } else {
                     // glass
-                    sphere_material = make_shared<dielectric>(1.5);
-                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                    material = make_shared<dielectric>(1.5);
+                }
+                bool choose_shape = a * a * b * b % 2;
+                if (choose_shape < 0.5) {
+                    world.add(make_shared<sphere>(center, 0.2, material));
+                } else {
+                    world.add(make_shared<cube>(center, 0.4, material));    
                 }
             }
         }
@@ -54,10 +57,10 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material1));
 
     auto material2 = make_shared<lambertian>(colour(0.4, 0.2, 0.1));
-    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
+    world.add(make_shared<cube>(point3(-4, 1, 0), 2.0, material2));
 
-    auto material3 = make_shared<metal>(colour(0.7, 0.6, 0.5), 0.0);
-    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material3));
+    auto material3 = make_shared<metal>(colour(0.6, 0.6, 0.6), 0.05);
+    world.add(make_shared<sphere>(point3(0, 1, 0), 2.0, material3));
 
     // Add a green metal sphere just behind the camera, this makes the "camera"
     // appear in reflections.
@@ -72,9 +75,9 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 512;
-    cam.samples_per_pixel = 10;
-    cam.max_depth         = 10;
+    cam.image_width       = 1920;
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 50;
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -105,7 +108,7 @@ void video_generation() {
         std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
         std::system(cmd.c_str());
         png_frames.push_back(png_name);
-
+        std::clog << "\rFrame " << frame_idx << " generated." << std::flush;
         frame_idx++;
     }
 
@@ -131,6 +134,7 @@ void video_generation() {
         std::system(cmd.c_str());
         png_frames.push_back(png_name);
 
+        std::clog << "\rFrame " << frame_idx << " generated." << std::flush;
         frame_idx++;
     }
 
@@ -151,16 +155,17 @@ void video_generation() {
         std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
         std::system(cmd.c_str());
         png_frames.push_back(png_name);
-
+        
+        std::clog << "\rFrame " << frame_idx << " generated." << std::flush;
         frame_idx++;
     }
 
-    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/4k.mp4");
+    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/greenie.mp4");
 }
 
 int main() {
-    // image_generation(0, point3(0,3,13), point3(0,1,0), "output.ppm");
-    video_generation();
+    image_generation(0, point3(5,3,13), point3(0,1,0), "cube_reflection.ppm");
+    // video_generation();
     return 0;
 }
 
