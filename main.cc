@@ -75,7 +75,7 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1920;
+    cam.image_width       = 3840;
     cam.samples_per_pixel = 50;
     cam.max_depth         = 50;
 
