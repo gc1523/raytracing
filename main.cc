@@ -60,7 +60,7 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     world.add(make_shared<cube>(point3(-4, 1, 0), 2.0, material2));
 
     auto material3 = make_shared<metal>(colour(0.6, 0.6, 0.6), 0.05);
-    world.add(make_shared<sphere>(point3(0, 1, 0), 2.0, material3));
+    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material3));
 
     // Add a green metal sphere just behind the camera, this makes the "camera"
     // appear in reflections.
@@ -75,7 +75,7 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 3840;
+    cam.image_width       = 384;
     cam.samples_per_pixel = 50;
     cam.max_depth         = 50;
 
@@ -164,7 +164,7 @@ void video_generation() {
 }
 
 int main() {
-    image_generation(0, point3(5,3,13), point3(0,1,0), "cube_reflection.ppm");
+    image_generation(0, point3(0,13,5), point3(0,1,0), "output.ppm");
     // video_generation();
     return 0;
 }
