@@ -26,3 +26,6 @@ This project implements a simple raytracer in C++. Credit to [this ray tracing c
 ![216p_gif](https://raw.githubusercontent.com/gc1523/raytracing/master/gifs/216p.gif)
 *Quick and dirty*
 
+![4k_with_cubes](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/4k_with_cubes.png)
+*I guess we're doing cubes now*
+
