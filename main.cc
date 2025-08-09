@@ -75,9 +75,9 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 3840;
-    cam.samples_per_pixel = 50;
-    cam.max_depth         = 50;
+    cam.image_width       = 1408; 
+    cam.samples_per_pixel = 25;
+    cam.max_depth         = 25;
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -160,12 +160,12 @@ void video_generation() {
         frame_idx++;
     }
 
-    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/greenie.mp4");
+    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/video.mp4");
 }
 
 int main() {
-    image_generation(0, point3(0,13,5), point3(0,1,0), "output.ppm");
-    // video_generation();
+    // image_generation(0, point3(0,13,5), point3(0,1,0), "output.ppm");
+    video_generation();
     return 0;
 }
 

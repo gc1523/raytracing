@@ -1,4 +1,4 @@
-name: Free Compute # Thank you daddy github
+name: Free Compute Image# Thank you daddy github
 
 on:
   workflow_dispatch:
