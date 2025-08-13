@@ -40,8 +40,8 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
                     auto albedo = colour::random(0.5, 1, rng);
                     auto fuzz = random_double(0, 0.5, rng);
                     material = make_shared<metal>(albedo, fuzz);
-                    auto center2 = center + vec3(0, random_double(0.0, 0.5, rng), 0);
-                    world.add(make_shared<sphere>(center, center2, 0.2, material));
+                    // auto center2 = center + vec3(0, random_double(0.0, 0.5, rng), 0);
+                    // world.add(make_shared<sphere>(center, center2, 0.2, material));
                     continue;
                 } else {
                     // glass
@@ -165,8 +165,8 @@ void video_generation() {
 }
 
 int main() {
-    image_generation(0, point3(13,2,3), point3(0,0,0), "output.ppm");
-    // video_generation();
+    // image_generation(0, point3(13,2,3), point3(0,0,0), "output.ppm");
+    video_generation();
     return 0;
 }
 
