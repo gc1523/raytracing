@@ -14,6 +14,7 @@
 using std::make_shared;
 using std::shared_ptr;
 
+
 // Constants
 
 const double infinity = std::numeric_limits<double>::infinity();
@@ -38,6 +39,11 @@ inline double random_double(std::mt19937& rng) {
 inline double random_double(double min, double max, std::mt19937& rng) {
     std::uniform_real_distribution<double> dist(min, max);
     return dist(rng);
+}
+
+inline int random_int(int min, int max, std::mt19937& rng) {
+    // Returns a random integer in [min,max].
+    return int(random_double((double)min, (double)(max+1), rng));
 }
 
 // Common Headers

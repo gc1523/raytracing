@@ -1,5 +1,6 @@
 #include "raytracing.h"
 
+#include "bvh.h"
 #include "camera.h"
 #include "hittable.h"
 #include "hittable_list.h"
@@ -30,7 +31,7 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
                 shared_ptr<material> material;
 
-                if (choose_mat < 0.6) {
+                if (choose_mat < 0.9) {
                     // diffuse
                     auto albedo = colour::random(rng) * colour::random(rng);
                     material = make_shared<lambertian>(albedo);
@@ -46,12 +47,7 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
                     // glass
                     material = make_shared<dielectric>(1.5);
                 }
-                bool choose_shape = a * a * b * b % 2;
-                if (choose_shape < 0.5) {
-                    world.add(make_shared<sphere>(center, 0.2, material));
-                } else {
-                    world.add(make_shared<cube>(center, 0.4, material));    
-                }
+                world.add(make_shared<sphere>(center, 0.2, material));
             }
         }
     }
@@ -60,7 +56,7 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material1));
 
     auto material2 = make_shared<lambertian>(colour(0.4, 0.2, 0.1));
-    world.add(make_shared<cube>(point3(-4, 1, 0), 2.0, material2));
+    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
 
     auto material3 = make_shared<metal>(colour(0.6, 0.6, 0.6), 0.05);
     world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material3));
@@ -75,12 +71,14 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
     auto material4 = make_shared<metal>(colour(0, 1, 0), 0);
     world.add(make_shared<sphere>(green_sphere_center, 0.25, material4));
 
+    world = hittable_list(make_shared<bvh_node>(world), rng);
+
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 640; 
-    cam.samples_per_pixel = 25;
-    cam.max_depth         = 25;
+    cam.image_width       = 3840; 
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 50;
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -167,7 +165,7 @@ void video_generation() {
 }
 
 int main() {
-    image_generation(0, point3(13,2,3), point3(0,0,0), "blur.ppm");
+    image_generation(0, point3(13,2,3), point3(0,0,0), "output.ppm");
     // video_generation();
     return 0;
 }
