@@ -8,7 +8,7 @@
 #include <random>
 #include <fstream>
 
-int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
+int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
     std::ofstream out(filename);
     if (!out) {
         std::cerr << "Failed to open " << filename << " for writing.\n";
@@ -30,7 +30,7 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
                 shared_ptr<material> material;
 
-                if (choose_mat < 0.8) {
+                if (choose_mat < 0.6) {
                     // diffuse
                     auto albedo = colour::random(rng) * colour::random(rng);
                     material = make_shared<lambertian>(albedo);
@@ -39,6 +39,9 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
                     auto albedo = colour::random(0.5, 1, rng);
                     auto fuzz = random_double(0, 0.5, rng);
                     material = make_shared<metal>(albedo, fuzz);
+                    auto center2 = center + vec3(0, random_double(0.0, 0.5, rng), 0);
+                    world.add(make_shared<sphere>(center, center2, 0.2, material));
+                    continue;
                 } else {
                     // glass
                     material = make_shared<dielectric>(1.5);
@@ -75,7 +78,7 @@ int image_generation(unsigned int seed = 69, point3 lookfrom = point3(13,3,3), p
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1408; 
+    cam.image_width       = 640; 
     cam.samples_per_pixel = 25;
     cam.max_depth         = 25;
 
@@ -164,8 +167,8 @@ void video_generation() {
 }
 
 int main() {
-    // image_generation(0, point3(0,13,5), point3(0,1,0), "output.ppm");
-    video_generation();
+    image_generation(0, point3(13,2,3), point3(0,0,0), "blur.ppm");
+    // video_generation();
     return 0;
 }
 

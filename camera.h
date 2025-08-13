@@ -128,8 +128,9 @@ class camera {
 
         auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample(rng);
         auto ray_direction = pixel_sample - ray_origin;
+        auto ray_time = random_double(rng) * 0.5;
 
-        return ray(ray_origin, ray_direction);
+        return ray(ray_origin, ray_direction, ray_time);
     }
 
     vec3 sample_square(std::mt19937& rng) const {
