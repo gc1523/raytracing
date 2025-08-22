@@ -6,6 +6,7 @@
 #include "hittable_list.h"
 #include "shapes.h"
 #include "material.h"
+#include "texture.h"
 #include <random>
 #include <fstream>
 
@@ -19,9 +20,8 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
     std::mt19937 rng(seed);
 
     hittable_list world;
-
-    auto ground_material = make_shared<lambertian>(colour(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
+    auto checker = make_shared<checker_texture>(0.32, colour(.2, .3, .1), colour(.9, .9, .9));
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
@@ -31,17 +31,18 @@ int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
                 shared_ptr<material> material;
 
-                if (choose_mat < 0.9) {
+                if (choose_mat < 0.8) {
                     // diffuse
                     auto albedo = colour::random(rng) * colour::random(rng);
                     material = make_shared<lambertian>(albedo);
-                } else if (choose_mat < 0.95) {
+                    auto center2 = center + vec3(0, random_double(0.0, 0.5, rng), 0);
+                    world.add(make_shared<sphere>(center, center2, 0.2, material));
+                    continue;
+                } else if (choose_mat < 0.9) {
                     // metal
                     auto albedo = colour::random(0.5, 1, rng);
                     auto fuzz = random_double(0, 0.5, rng);
                     material = make_shared<metal>(albedo, fuzz);
-                    // auto center2 = center + vec3(0, random_double(0.0, 0.5, rng), 0);
-                    // world.add(make_shared<sphere>(center, center2, 0.2, material));
                     continue;
                 } else {
                     // glass
@@ -165,8 +166,8 @@ void video_generation() {
 }
 
 int main() {
-    // image_generation(0, point3(13,2,3), point3(0,0,0), "output.ppm");
-    video_generation();
+    image_generation(0, point3(13,2,3), point3(0,0,0), "output.ppm");
+    // video_generation();
     return 0;
 }
 
