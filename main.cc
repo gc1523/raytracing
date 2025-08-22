@@ -10,7 +10,31 @@
 #include <random>
 #include <fstream>
 
-int image_generation(unsigned int seed, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
+#define RAND_SEED 42
+
+void earth( const std::string&filename = "earth.ppm") {
+    auto earth_texture = make_shared<image_texture>("textures/earthmap.jpg");
+    auto earth_surface = make_shared<lambertian>(earth_texture);
+    auto globe = make_shared<sphere>(point3(0,0,0), 2, earth_surface);
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+
+    cam.vfov     = 20;
+    cam.lookfrom = point3(0,0,12);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+    std::ofstream out("earth.ppm");
+    cam.render(hittable_list(globe, std::mt19937(RAND_SEED)), RAND_SEED, out);
+}
+
+int bouncing_spheres_image_generation(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
     std::ofstream out(filename);
     if (!out) {
         std::cerr << "Failed to open " << filename << " for writing.\n";
@@ -105,7 +129,7 @@ void video_generation() {
         char ppm_name[64]; char png_name[64];
         std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
         std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
-        image_generation(42, lookfrom, lookat, ppm_name);
+        // image_generation(42, lookfrom, lookat, ppm_name);
 
         std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
         std::system(cmd.c_str());
@@ -130,7 +154,7 @@ void video_generation() {
         char ppm_name[64]; char png_name[64];
         std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
         std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
-        image_generation(42, lookfrom, lookat, ppm_name);
+        // image_generation(42, lookfrom, lookat, ppm_name);
 
         std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
         std::system(cmd.c_str());
@@ -152,7 +176,7 @@ void video_generation() {
         char ppm_name[64]; char png_name[64];
         std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
         std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
-        image_generation(42, lookfrom, lookat, ppm_name);
+        // image_generation(42, lookfrom, lookat, ppm_name);
 
         std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
         std::system(cmd.c_str());
@@ -165,9 +189,37 @@ void video_generation() {
     std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/video.mp4");
 }
 
+void checkered_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
+    std::ofstream out(filename);
+
+    hittable_list world;
+
+    auto checker = make_shared<checker_texture>(0.32, colour(.2, .3, .1), colour(.9, .9, .9));
+
+    world.add(make_shared<sphere>(point3(0,-10, 0), 10, make_shared<lambertian>(checker)));
+    world.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+
+    cam.vfov     = 20;
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world, RAND_SEED, out);
+}
+
 int main() {
-    image_generation(0, point3(13,2,3), point3(0,0,0), "output.ppm");
+    checkered_spheres(0, point3(13,2,3), point3(0,0,0), "output.ppm");
     // video_generation();
+    earth();
     return 0;
 }
 
