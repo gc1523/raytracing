@@ -36,9 +36,8 @@ inline double random_double(std::mt19937& rng) {
     return dist(rng);
 }
 inline double random_double(double min, double max) {
-    std::uniform_real_distribution<double> dist(min, max);
-    std::mt19937 rng;
-    return dist(rng);
+    // Returns a random real in [min,max).
+    return min + (max-min)*random_double();
 }
 inline double random_double(double min, double max, std::mt19937& rng) {
     std::uniform_real_distribution<double> dist(min, max);

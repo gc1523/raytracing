@@ -62,7 +62,7 @@ void spinning_earth() {
 void perlin_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
     hittable_list world;
 
-    auto pertext = make_shared<noise_texture>();
+    auto pertext = make_shared<noise_texture>(4);    
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
     world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
 
@@ -70,7 +70,7 @@ void perlin_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 1920;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 50;
     cam.max_depth         = 50;
 
     cam.vfov     = 20;
@@ -266,7 +266,7 @@ void checkered_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(1
 }
 
 int main() {
-    spinning_earth();
+    perlin_spheres();
     return 0;
 }
 

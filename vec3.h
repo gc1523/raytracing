@@ -53,7 +53,9 @@ class vec3 {
     static vec3 random(std::mt19937& rng) {
         return vec3(random_double(rng), random_double(rng), random_double(rng));
     }
-
+    static vec3 random(double min, double max) {
+        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+    }
     static vec3 random(double min, double max, std::mt19937& rng) {
         return vec3(random_double(min, max, rng), random_double(min, max, rng), random_double(min, max, rng));
     }
