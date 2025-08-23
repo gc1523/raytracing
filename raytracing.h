@@ -35,10 +35,18 @@ inline double random_double(std::mt19937& rng) {
     static thread_local std::uniform_real_distribution<double> dist(0.0, 1.0);
     return dist(rng);
 }
-
+inline double random_double(double min, double max) {
+    std::uniform_real_distribution<double> dist(min, max);
+    std::mt19937 rng;
+    return dist(rng);
+}
 inline double random_double(double min, double max, std::mt19937& rng) {
     std::uniform_real_distribution<double> dist(min, max);
     return dist(rng);
+}
+
+inline int random_int(int min, int max) {
+    return int(random_double((double)min, (double)(max+1)));
 }
 
 inline int random_int(int min, int max, std::mt19937& rng) {

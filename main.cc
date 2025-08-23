@@ -12,7 +12,7 @@
 
 #define RAND_SEED 42
 
-void earth( const std::string&filename = "earth.ppm") {
+void earth(point3 lookfrom, point3 lookat, const std::string&filename = "earth.ppm") {
     auto earth_texture = make_shared<image_texture>("textures/earthmap.jpg");
     auto earth_surface = make_shared<lambertian>(earth_texture);
     auto globe = make_shared<sphere>(point3(0,0,0), 2, earth_surface);
@@ -20,18 +20,67 @@ void earth( const std::string&filename = "earth.ppm") {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
+    cam.image_width       = 960;
     cam.samples_per_pixel = 100;
     cam.max_depth         = 50;
 
     cam.vfov     = 20;
-    cam.lookfrom = point3(0,0,12);
-    cam.lookat   = point3(0,0,0);
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0;
-    std::ofstream out("earth.ppm");
+    std::ofstream out(filename);
     cam.render(hittable_list(globe, std::mt19937(RAND_SEED)), RAND_SEED, out);
+}
+
+void spinning_earth() {
+    std::vector<std::string> png_frames;
+
+    int frame_idx = 0;
+    // Rotate around the scene
+    for (int i = 0; i < 360; i += 3) {
+        double angle = i * M_PI / 180.0;
+        point3 lookfrom(13 * std::sin(angle), 3, 13 * std::cos(angle));
+        point3 lookat(0, 0, 0);
+        char ppm_name[64]; char png_name[64];
+        std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
+        std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
+        earth(lookfrom, lookat, ppm_name);
+
+        std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
+        std::system(cmd.c_str());
+        png_frames.push_back(png_name);
+        std::clog << "\rFrame " << frame_idx << " generated." << std::flush;
+        frame_idx++;
+    }
+
+    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/video.mp4");
+
+}
+
+void perlin_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
+    hittable_list world;
+
+    auto pertext = make_shared<noise_texture>();
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
+    world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 1920;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+
+    cam.vfov     = 20;
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+    std::ofstream out(filename);
+    cam.render(world, seed, out);
 }
 
 int bouncing_spheres_image_generation(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,1,0), const std::string& filename = "output.ppm") {
@@ -217,9 +266,7 @@ void checkered_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(1
 }
 
 int main() {
-    checkered_spheres(0, point3(13,2,3), point3(0,0,0), "output.ppm");
-    // video_generation();
-    earth();
+    spinning_earth();
     return 0;
 }
 
