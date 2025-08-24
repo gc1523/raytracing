@@ -13,6 +13,34 @@
 
 #define RAND_SEED 42
 
+void simple_light(point3 lookfrom = point3(26,3,6), point3 lookat = point3(0,2,0), const std::string&filename = "output.ppm") {
+    hittable_list world;
+    std::ofstream out(filename);
+    auto pertext = make_shared<noise_texture>(4);
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
+    world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
+
+    auto difflight = make_shared<diffuse_light>(colour(4,4,4));
+    world.add(make_shared<quad>(point3(3,1,-2), vec3(2,0,0), vec3(0,2,0), difflight));
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 1920;
+    cam.samples_per_pixel = 250;
+    cam.max_depth         = 125;
+    cam.background        = colour(0,0,0);
+
+    cam.vfov     = 20;
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world, RAND_SEED, out);
+}
+
 void earth(point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,0,0), const std::string&filename = "earth.ppm") {
     auto earth_texture = make_shared<image_texture>("textures/earthmap.jpg");
     auto earth_surface = make_shared<lambertian>(earth_texture);
@@ -24,6 +52,7 @@ void earth(point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,0,0), cons
     cam.image_width       = 960;
     cam.samples_per_pixel = 100;
     cam.max_depth         = 50;
+    cam.background        = colour(0.70, 0.80, 1.00);
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -73,6 +102,7 @@ void perlin_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3
     cam.image_width       = 1920;
     cam.samples_per_pixel = 500;
     cam.max_depth         = 500;
+    cam.background        = colour(0.70, 0.80, 1.00);
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -154,6 +184,7 @@ int bouncing_spheres_image_generation(unsigned int seed = RAND_SEED, point3 look
     cam.image_width       = 1920; 
     cam.samples_per_pixel = 50;
     cam.max_depth         = 50;
+    cam.background        = colour(0.70, 0.80, 1.00);
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -255,6 +286,7 @@ void checkered_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(1
     cam.image_width       = 400;
     cam.samples_per_pixel = 100;
     cam.max_depth         = 50;
+    cam.background        = colour(0.70, 0.80, 1.00);
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -289,6 +321,7 @@ void quads(const std::string& filename = "output.ppm") {
     cam.image_width       = 1920;
     cam.samples_per_pixel = 250;
     cam.max_depth         = 100;
+    cam.background        = colour(0.70, 0.80, 1.00);
 
     cam.vfov     = 80;
     cam.lookfrom = point3(0,0,9);
@@ -301,7 +334,7 @@ void quads(const std::string& filename = "output.ppm") {
 }
 
 int main() {
-    switch (6) {
+    switch (8) {
         case 1:  
             bouncing_spheres_image_generation();
             break;
@@ -322,6 +355,9 @@ int main() {
             break;
         case 7:  
             quads();
+            break;
+        case 8:
+            simple_light();
             break;
     }
     return 0;
