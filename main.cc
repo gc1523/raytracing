@@ -8,10 +8,55 @@
 #include "material.h"
 #include "texture.h"
 #include "quad.h"
+#include "constant_medium.h"
 #include <random>
 #include <fstream>
 
 #define RAND_SEED 42
+
+void cornell_smoke(point3 lookfrom = point3(278, 278, -800), point3 lookat = point3(278, 278, 0), const std::string&filename = "output.ppm") {
+    hittable_list world;
+
+    auto red   = make_shared<lambertian>(colour(.65, .05, .05));
+    auto white = make_shared<lambertian>(colour(.73, .73, .73));
+    auto green = make_shared<lambertian>(colour(.12, .45, .15));
+    auto light = make_shared<diffuse_light>(colour(7, 7, 7));
+
+    world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
+    world.add(make_shared<quad>(point3(113,554,127), vec3(330,0,0), vec3(0,0,305), light));
+    world.add(make_shared<quad>(point3(0,555,0), vec3(555,0,0), vec3(0,0,555), white));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), white);
+    box1 = make_shared<rotate_y>(box1, 15);
+    box1 = make_shared<translate>(box1, vec3(265,0,295));
+
+    shared_ptr<hittable> box2 = box(point3(0,0,0), point3(165,165,165), white);
+    box2 = make_shared<rotate_y>(box2, -18);
+    box2 = make_shared<translate>(box2, vec3(130,0,65));
+
+    world.add(make_shared<constant_medium>(box1, 0.01, colour(0,0,0)));
+    world.add(make_shared<constant_medium>(box2, 0.01, colour(1,1,1)));
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 600;
+    cam.samples_per_pixel = 400;
+    cam.max_depth         = 10;
+    cam.background        = colour(0,0,0);
+
+    cam.vfov     = 40;
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+    std::ofstream out(filename);
+    cam.render(world, RAND_SEED, out);
+}
 
 void cornell_box(point3 lookfrom = point3(278, 278, -800), point3 lookat = point3(278, 278, 0), const std::string&filename = "output.ppm") {
     hittable_list world;
@@ -378,7 +423,7 @@ void quads(const std::string& filename = "output.ppm") {
 }
 
 int main() {
-    switch (9) {
+    switch (10) {
         case 1:  
             bouncing_spheres_image_generation();
             break;
@@ -405,6 +450,9 @@ int main() {
             break;
         case 9:
             cornell_box();
+            break;
+        case 10:
+            cornell_smoke();
             break;
     }
     return 0;
