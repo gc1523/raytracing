@@ -301,7 +301,7 @@ void quads(const std::string& filename = "output.ppm") {
 }
 
 int main() {
-    switch (7) {
+    switch (6) {
         case 1:  
             bouncing_spheres_image_generation();
             break;
