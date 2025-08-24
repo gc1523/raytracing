@@ -7,12 +7,13 @@
 #include "shapes.h"
 #include "material.h"
 #include "texture.h"
+#include "quad.h"
 #include <random>
 #include <fstream>
 
 #define RAND_SEED 42
 
-void earth(point3 lookfrom, point3 lookat, const std::string&filename = "earth.ppm") {
+void earth(point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,0,0), const std::string&filename = "earth.ppm") {
     auto earth_texture = make_shared<image_texture>("textures/earthmap.jpg");
     auto earth_surface = make_shared<lambertian>(earth_texture);
     auto globe = make_shared<sphere>(point3(0,0,0), 2, earth_surface);
@@ -70,8 +71,8 @@ void perlin_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(13,3
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 1920;
-    cam.samples_per_pixel = 50;
-    cam.max_depth         = 50;
+    cam.samples_per_pixel = 500;
+    cam.max_depth         = 500;
 
     cam.vfov     = 20;
     cam.lookfrom = lookfrom;
@@ -265,8 +266,64 @@ void checkered_spheres(unsigned int seed = RAND_SEED, point3 lookfrom = point3(1
     cam.render(world, RAND_SEED, out);
 }
 
+void quads(const std::string& filename = "output.ppm") {
+    hittable_list world;
+    std::ofstream out(filename);
+    // Materials
+    auto left_red     = make_shared<lambertian>(colour(1.0, 0.2, 0.2));
+    auto back_green   = make_shared<lambertian>(colour(0.2, 1.0, 0.2));
+    auto right_blue   = make_shared<lambertian>(colour(0.2, 0.2, 1.0));
+    auto upper_orange = make_shared<lambertian>(colour(1.0, 0.5, 0.0));
+    auto lower_teal   = make_shared<lambertian>(colour(0.2, 0.8, 0.8));
+
+    // Quads
+    world.add(make_shared<quad>(point3(-3,-2, 5), vec3(0, 0,-4), vec3(0, 4, 0), left_red));
+    world.add(make_shared<quad>(point3(-2,-2, 0), vec3(4, 0, 0), vec3(0, 4, 0), back_green));
+    world.add(make_shared<quad>(point3( 3,-2, 1), vec3(0, 0, 4), vec3(0, 4, 0), right_blue));
+    world.add(make_shared<quad>(point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
+    world.add(make_shared<quad>(point3(-2,-3, 5), vec3(4, 0, 0), vec3(0, 0,-4), lower_teal));
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 1920;
+    cam.samples_per_pixel = 250;
+    cam.max_depth         = 100;
+
+    cam.vfov     = 80;
+    cam.lookfrom = point3(0,0,9);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world, RAND_SEED, out);
+}
+
 int main() {
-    perlin_spheres();
+    switch (7) {
+        case 1:  
+            bouncing_spheres_image_generation();
+            break;
+        case 2:  
+            video_generation();
+            break;
+        case 3:  
+            checkered_spheres();  
+            break;
+        case 4:  
+            earth();              
+            break;
+        case 5:  
+            spinning_earth();
+            break;
+        case 6:  
+            perlin_spheres();     
+            break;
+        case 7:  
+            quads();
+            break;
+    }
     return 0;
 }
 
