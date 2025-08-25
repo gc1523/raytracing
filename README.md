@@ -23,3 +23,6 @@ This project implements a simple raytracer in C++. Credit to [this ray tracing c
 |:--:|:--:|
 | *Quick and dirty* | *I guess we're doing cubes now* |
 
+| ![Cornell Box with smoke volumes](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/4ksmoke.png) | ![Finale](https://raw.githubusercontent.com/gc1523/raytracing/master/images/pngs/finale) |
+|:--:|:--:|
+| *Cornell Box with smoke volumes* | *Finale* |
