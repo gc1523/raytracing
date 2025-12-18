@@ -501,8 +501,55 @@ void final_scene(point3 lookfrom = point3(478, 278, -600), point3 lookat = point
     cam.render(world, RAND_SEED, out);
 }
 
+void goober(point3 lookfrom = point3(13,3,3), point3 lookat = point3(0,0,0), const std::string&filename = "earth.ppm") {
+    auto earth_texture = make_shared<image_texture>("textures/goober.jpg");
+    auto earth_surface = make_shared<lambertian>(earth_texture);
+    auto globe = make_shared<sphere>(point3(0,0,0), 2, earth_surface);
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 960;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+    cam.background        = colour(0.70, 0.80, 1.00);
+
+    cam.vfov     = 20;
+    cam.lookfrom = lookfrom;
+    cam.lookat   = lookat;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+    std::ofstream out(filename);
+    cam.render(hittable_list(globe, std::mt19937(RAND_SEED)), RAND_SEED, out);
+}
+
+void goober_vid() {
+    std::vector<std::string> png_frames;
+
+    int frame_idx = 0;
+    // Rotate around the scene
+    for (int i = 0; i < 360; i += 3) {
+        double angle = i * M_PI / 180.0;
+        point3 lookfrom(13 * std::sin(angle), 3, 13 * std::cos(angle));
+        point3 lookat(0, 0, 0);
+        char ppm_name[64]; char png_name[64];
+        std::sprintf(ppm_name, "generation/frame_%04d.ppm", frame_idx);
+        std::sprintf(png_name, "generation/frame_%04d.png", frame_idx);
+        goober(lookfrom, lookat, ppm_name);
+
+        std::string cmd = "convert " + std::string(ppm_name) + " " + png_name;
+        std::system(cmd.c_str());
+        png_frames.push_back(png_name);
+        std::clog << "\rFrame " << frame_idx << " generated." << std::flush;
+        frame_idx++;
+    }
+
+    std::system("ffmpeg -framerate 20 -i generation/frame_%04d.png -c:v libx264 -pix_fmt yuv420p videos/video.mp4");
+}
+
 int main() {
-    switch (11) {
+    switch (12) {
         case 1:  
             bouncing_spheres_image_generation();
             break;
@@ -535,6 +582,9 @@ int main() {
             break;
         case 11:
             final_scene();
+            break;
+        case 12:
+            goober_vid();
             break;
     }
     return 0;
